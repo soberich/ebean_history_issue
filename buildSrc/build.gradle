@@ -1,0 +1,29 @@
+import static org.gradle.api.PathValidation.DIRECTORY
+
+plugins {
+    id("java-gradle-plugin")
+}
+
+repositories {
+    gradlePluginPortal()
+    jcenter()
+}
+
+/*plugin*/ dependencies {
+    implementation(group: "io.ebean",                                          name: "ebean-gradle-plugin",       version: "11.26.1")
+    implementation(group: "org.springframework.boot",                          name: "spring-boot-gradle-plugin", version: "2.1.0.RELEASE")
+}
+
+gradlePlugin {
+    plugins {
+        for (plugin in file("./src/main/groovy", DIRECTORY).listFiles({ it.isFile() && it.name.contains("Plugin") } as FileFilter)) {
+            def name = plugin.name.substring(0, plugin.name.lastIndexOf("."))
+                .replaceAll("\\\$", "")
+                .replaceAll("((?!^)[^_])([A-Z0-9]+)", "\$1-\$2").toLowerCase()
+            it.create(name) {
+                it.id                  = name.substring(0, name.lastIndexOf("-plugin"))
+                it.implementationClass = plugin.name.substring(0, plugin.name.lastIndexOf("."))
+            }
+        }
+    }
+}

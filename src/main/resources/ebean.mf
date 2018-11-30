@@ -1,0 +1,3 @@
+entity-packages: com.example
+querybean-packages: com.example
+transactional-packages: com.example
